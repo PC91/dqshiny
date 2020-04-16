@@ -150,7 +150,7 @@ dq_render_handsontable <- function(
       f_vals <- filter_values()
       if (length(f_vals) == 0) return()
       l <- vapply(f_vals, length, 0L)
-      df <- text_filter(dqv$full[, columns, drop = FALSE], f_vals[l == 1L])
+      df <- text_filter(dqv$full[, columns, drop = FALSE], f_vals[l == 1L], cols_filter)
       range_filter(df, f_vals[l == 2L])
     }
   })
