@@ -1,5 +1,7 @@
 #' @author richard.kunze
-filter_row <- function(ns, dqv, filters, columns, sorting, reset = TRUE) {
+filter_row <- function(
+  ns, dqv, filters, columns, sorting,
+  reset = TRUE, cols_filter = NULL, cols_filter_placeholder_text = NULL) {
   data <- shiny::isolate(dqv$full[, columns, drop = FALSE])
   to_sort <- length(sorting) > 0L
   class <- paste0("filter-row", if (to_sort) " sorting")
@@ -12,7 +14,10 @@ filter_row <- function(ns, dqv, filters, columns, sorting, reset = TRUE) {
     fv <- filters[[i]]$value
     id <- ns("filter", n)
     el <- switch(ft,
-      "T" = shiny::textInput(id, NULL, value = fv, placeholder = n),
+      "T" = shiny::textInput(
+        id, NULL, value = fv,
+        placeholder = ifelse(is.null(cols_filter), n, cols_filter_placeholder_text)
+        ),
       "A" = auto_input(id, d, fv, n),
       "S" = select_input(id, d, fv, n),
       "R" = range_input(id, as_numeric(d), fv, ft),

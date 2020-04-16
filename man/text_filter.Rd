@@ -4,13 +4,16 @@
 \alias{text_filter}
 \title{text filter for data.frames}
 \usage{
-text_filter(df, values)
+text_filter(df, values, cols_filter = NULL)
 }
 \arguments{
 \item{df}{data frame to filter}
 
 \item{values}{character array with the filter values, should have length of
 data or being named}
+
+\item{cols_filter}{optional list of columns to be filtered simultaneously
+using the first filter parameter with type "T"}
 }
 \value{
 text_filter: filtered data frame

@@ -7,11 +7,25 @@
 \usage{
 dq_handsontable_output(id, width = 12L, offset = 0L)
 
-dq_render_handsontable(id, data, context = NULL, filters = "T",
-  page_size = 25L, reset = TRUE, sorting = NULL, columns = NULL,
-  width_align = FALSE, horizontal_scroll = FALSE, table_param = NULL,
-  cols_param = NULL, col_param = NULL, cell_param = NULL,
-  session = shiny::getDefaultReactiveDomain())
+dq_render_handsontable(
+  id,
+  data,
+  context = NULL,
+  filters = "T",
+  page_size = 25L,
+  reset = TRUE,
+  sorting = NULL,
+  columns = NULL,
+  width_align = FALSE,
+  horizontal_scroll = FALSE,
+  table_param = NULL,
+  cols_param = NULL,
+  col_param = NULL,
+  cell_param = NULL,
+  session = shiny::getDefaultReactiveDomain(),
+  cols_filter = NULL,
+  cols_filter_placeholder_text = NULL
+)
 }
 \arguments{
 \item{id}{id of the element}
@@ -34,7 +48,9 @@ NOTE: this parameter is deprecated and will be removed soon}
 Text-, Select-, Range-, DateRange-, AutocompleteInput or none, vectors of
 length one will add a filter of this type for each column and NA will try to
 guess proper filters, can also contain nested lists specifying type and
-initial value (e.g. list(list(type = "T", value = "init"), NA, "T", ...))}
+initial value (e.g. list(list(type = "T", value = "init"), NA, "T", ...).)
+If this is a simutaneous filter (the parameter cols_filter is not NULL),
+only the first filter is used and it must be of type "T"}
 
 \item{page_size}{optional integer, number of items per page, can be one of
 10, 25, 50, 100 or any other value(s) which will be added to this list, first
@@ -71,6 +87,12 @@ rhandsontable col elements}
 rhandsontable cells}
 
 \item{session}{shiny session object}
+
+\item{cols_filter}{optional list of columns to be filtered simultaneously
+using the first filter parameter with type "T"}
+
+\item{cols_filter_placeholder_text}{optional placeholder text that is displayed
+in the simutaneous filter.}
 }
 \value{
 dq_handsontable_output: fluidRow containing the output fields

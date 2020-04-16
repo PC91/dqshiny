@@ -15,24 +15,38 @@ get_filters <- function(input) {
 #' @param df data frame to filter
 #' @param values character array with the filter values, should have length of
 #' data or being named
+#' @param cols_filter optional list of columns to be filtered simultaneously
+#' using the first filter parameter with type "T"
 #'
 #' @return text_filter: filtered data frame
 #' @author richard.kunze
 #' @export
-text_filter <- function(df, values) {
+text_filter <- function(df, values, cols_filter = NULL) {
+
+  if (!is.null(cols_filter)) {
+    df$new_cols_filter <- sapply(
+      seq(nrow(df)),
+      function(i) { paste(df[i, cols_filter], collapse = "|") }
+    )
+    values <- values[1]
+    names(values) <- "new_cols_filter"
+  }
+
   if (all(values == "")) return(df)
   values <- unlist(values)
   if (!is.null(names(values))) {
     values <- values[match(names(df), names(values))]
   }
   values[values == ""] <- NA
+
   if (all(is.na(values))) return(df)
   return(text_filter_rec(df, values, seq(nrow(df))))
 }
 
 #' @author richard.kunze
 text_filter_rec <- function(df, values, valid, depth = 1L) {
-  if (depth > length(values)) return(df[valid, , drop = FALSE])
+  if (depth > length(values))
+    return(df[valid, colnames(df)[colnames(df) != "new_cols_filter"], drop = FALSE])
   if (!is.na(values[depth])) {
     index <- tryCatch(
       grep(values[depth], df[valid, depth], ignore.case = TRUE),

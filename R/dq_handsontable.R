@@ -46,7 +46,9 @@ dq_handsontable_output <- function(id, width = 12L, offset = 0L) {
 #' Text-, Select-, Range-, DateRange-, AutocompleteInput or none, vectors of
 #' length one will add a filter of this type for each column and NA will try to
 #' guess proper filters, can also contain nested lists specifying type and
-#' initial value (e.g. list(list(type = "T", value = "init"), NA, "T", ...))
+#' initial value (e.g. list(list(type = "T", value = "init"), NA, "T", ...).)
+#' If this is a simutaneous filter (the parameter cols_filter is not NULL),
+#' only the first filter is used and it must be of type "T"
 #' @param reset optional logical, specify whether to add a button to reset
 #' filters and sort buttons to initial values or not
 #' @param page_size optional integer, number of items per page, can be one of
@@ -72,6 +74,10 @@ dq_handsontable_output <- function(id, width = 12L, offset = 0L) {
 #' @param cell_param optional list of lists to specify parameters to hand to
 #' rhandsontable cells
 #' @param session shiny session object
+#' @param cols_filter optional list of columns to be filtered simultaneously
+#' using the first filter parameter with type "T"
+#' @param cols_filter_placeholder_text optional placeholder text that is displayed
+#' in the simutaneous filter.
 #'
 #' @return dq_render_handsontable: the given data
 #' @author richard.kunze
@@ -106,7 +112,8 @@ dq_render_handsontable <- function(
   id, data, context = NULL, filters = "T", page_size = 25L, reset = TRUE,
   sorting = NULL, columns = NULL, width_align = FALSE, horizontal_scroll = FALSE,
   table_param = NULL, cols_param = NULL, col_param = NULL, cell_param = NULL,
-  session = shiny::getDefaultReactiveDomain()
+  session = shiny::getDefaultReactiveDomain(),
+  cols_filter = NULL, cols_filter_placeholder_text = NULL
 ) {
   requireNamespace("rhandsontable", quietly = TRUE)
   requireNamespace("shiny", quietly = TRUE)
@@ -201,7 +208,7 @@ dq_render_handsontable <- function(
       # correct filters according to (new?) dataset
       filters <<- correct_filters(filters, shiny::isolate(dqv$full[, columns, drop = FALSE]))
     }
-    filter_row(ns, dqv, filters, columns, sorting, reset)
+    filter_row(ns, dqv, filters, columns, sorting, reset, cols_filter, cols_filter_placeholder_text)
   })
 
   # merge default table/cols parameters with given ones
