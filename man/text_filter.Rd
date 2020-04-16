@@ -4,7 +4,7 @@
 \alias{text_filter}
 \title{text filter for data.frames}
 \usage{
-text_filter(df, values, cols_filter = NULL)
+text_filter(df, values, cols_filter = NULL, id_col_filter_placement = NULL)
 }
 \arguments{
 \item{df}{data frame to filter}
@@ -14,6 +14,9 @@ data or being named}
 
 \item{cols_filter}{optional list of columns to be filtered simultaneously
 using the first filter parameter with type "T"}
+
+\item{id_col_filter_placement}{optional column index to place the simutaneous
+filter, must be non-null when the parameter cols_filter is non-null}
 }
 \value{
 text_filter: filtered data frame

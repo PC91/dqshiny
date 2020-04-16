@@ -17,19 +17,20 @@ get_filters <- function(input) {
 #' data or being named
 #' @param cols_filter optional list of columns to be filtered simultaneously
 #' using the first filter parameter with type "T"
+#' @param id_col_filter_placement optional column index to place the simutaneous
+#' filter, must be non-null when the parameter cols_filter is non-null
 #'
 #' @return text_filter: filtered data frame
 #' @author richard.kunze
 #' @export
-text_filter <- function(df, values, cols_filter = NULL) {
+text_filter <- function(df, values, cols_filter = NULL, id_col_filter_placement = NULL) {
 
   if (!is.null(cols_filter)) {
     df$new_cols_filter <- sapply(
       seq(nrow(df)),
       function(i) { paste(df[i, cols_filter], collapse = "|") }
     )
-    values <- values[1]
-    names(values) <- "new_cols_filter"
+    names(values)[names(values) == names(df)[id_col_filter_placement]] <- "new_cols_filter"
   }
 
   if (all(values == "")) return(df)
@@ -39,14 +40,17 @@ text_filter <- function(df, values, cols_filter = NULL) {
   }
   values[values == ""] <- NA
 
-  if (all(is.na(values))) return(df)
+  if (all(is.na(values))) {
+    return(df[, colnames(df)[colnames(df) != "new_cols_filter"], drop = FALSE])
+  }
   return(text_filter_rec(df, values, seq(nrow(df))))
 }
 
 #' @author richard.kunze
 text_filter_rec <- function(df, values, valid, depth = 1L) {
-  if (depth > length(values))
+  if (depth > length(values)) {
     return(df[valid, colnames(df)[colnames(df) != "new_cols_filter"], drop = FALSE])
+  }
   if (!is.na(values[depth])) {
     index <- tryCatch(
       grep(values[depth], df[valid, depth], ignore.case = TRUE),

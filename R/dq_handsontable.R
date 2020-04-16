@@ -125,6 +125,12 @@ dq_render_handsontable <- function(
   }
   if (length(columns) == 0L) columns <- TRUE
 
+  # Get the first column with text filter to place the simutaneous filter
+  id_col_filter_placement <- NULL
+  if (!is.null(cols_filter)) {
+    id_col_filter_placement <- which(grepl("^T", filters))[1]
+  }
+
   ns <- dq_NS(id)
   app_input <- session$input
   app_output <- session$output
@@ -150,7 +156,12 @@ dq_render_handsontable <- function(
       f_vals <- filter_values()
       if (length(f_vals) == 0) return()
       l <- vapply(f_vals, length, 0L)
-      df <- text_filter(dqv$full[, columns, drop = FALSE], f_vals[l == 1L], cols_filter)
+      df <- text_filter(
+        dqv$full[, columns, drop = FALSE],
+        f_vals[l == 1L],
+        cols_filter,
+        id_col_filter_placement
+        )
       range_filter(df, f_vals[l == 2L])
     }
   })
