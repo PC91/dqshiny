@@ -75,7 +75,9 @@ dq_handsontable_output <- function(id, width = 12L, offset = 0L) {
 #' rhandsontable cells
 #' @param session shiny session object
 #' @param cols_filter optional list of columns to be filtered simultaneously
-#' using the first filter parameter with type "T"
+#' using the first filter parameter with type "T." When this parameter is not NULL,
+#' there can be only one filter in total and therefore all other filters will not
+#' be updated.
 #' @param cols_filter_placeholder_text optional placeholder text that is displayed
 #' in the simutaneous filter.
 #'
@@ -181,30 +183,33 @@ dq_render_handsontable <- function(
   })
 
   if (shiny::is.reactivevalues(table_data)) {
+    #print("shiny::is.reactivevalues(table_data)")
     shiny::observeEvent(table_data[[id]], {
       if (no_update) {
         no_update <<- FALSE
       } else {
         dqv$full <- as.data.frame(table_data[[id]])
-        if (!is.null(filters)) {
+        if ((!is.null(filters)) & (is.null(cols_filter))) {
           update_filters(dqv$full[, columns, drop = FALSE], filters, session)
         }
       }
     }, ignoreInit = TRUE)
     dqv$full <- as.data.frame(shiny::isolate(table_data[[id]]))
   } else if (shiny::is.reactive(table_data)) {
+    #print("shiny::is.reactive(table_data)")
     shiny::observeEvent(table_data(), {
       if (no_update) {
         no_update <<- FALSE
       } else {
         dqv$full <- as.data.frame(table_data())
-        if (!is.null(filters)) {
+        if ((!is.null(filters)) & (is.null(cols_filter))) {
           update_filters(dqv$full[, columns, drop = FALSE], filters, session)
         }
       }
     }, ignoreInit = TRUE)
     dqv$full <- as.data.frame(shiny::isolate(table_data()))
   } else {
+    #print("else")
     dqv$full <- as.data.frame(table_data)
   }
 
@@ -303,7 +308,7 @@ dq_render_handsontable <- function(
         no_update <<- TRUE
         table_data(dqv$full)
       }
-      if (!is.null(filters)) {
+      if ((!is.null(filters)) & (is.null(cols_filter))) {
         update_filters(dqv$full[, columns, drop = FALSE], filters, session)
       }
     }

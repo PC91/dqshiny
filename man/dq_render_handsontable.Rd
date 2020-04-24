@@ -89,7 +89,9 @@ rhandsontable cells}
 \item{session}{shiny session object}
 
 \item{cols_filter}{optional list of columns to be filtered simultaneously
-using the first filter parameter with type "T"}
+using the first filter parameter with type "T." When this parameter is not NULL,
+there can be only one filter in total and therefore all other filters will not
+be updated.}
 
 \item{cols_filter_placeholder_text}{optional placeholder text that is displayed
 in the simutaneous filter.}
