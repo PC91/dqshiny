@@ -164,7 +164,12 @@ dq_render_handsontable <- function(
         cols_filter,
         id_col_filter_placement
         )
-      range_filter(df, f_vals[l == 2L])
+      df_result <- range_filter(df, f_vals[l == 2L])
+
+      if ((nrow(df_result) == 1) & (is.na(df_result[1,1]))) {
+        return (df_result[0,])
+      }
+      return (df_result)
     }
   })
 
@@ -183,7 +188,6 @@ dq_render_handsontable <- function(
   })
 
   if (shiny::is.reactivevalues(table_data)) {
-    #print("shiny::is.reactivevalues(table_data)")
     shiny::observeEvent(table_data[[id]], {
       if (no_update) {
         no_update <<- FALSE
@@ -196,7 +200,6 @@ dq_render_handsontable <- function(
     }, ignoreInit = TRUE)
     dqv$full <- as.data.frame(shiny::isolate(table_data[[id]]))
   } else if (shiny::is.reactive(table_data)) {
-    #print("shiny::is.reactive(table_data)")
     shiny::observeEvent(table_data(), {
       if (no_update) {
         no_update <<- FALSE
@@ -209,7 +212,6 @@ dq_render_handsontable <- function(
     }, ignoreInit = TRUE)
     dqv$full <- as.data.frame(shiny::isolate(table_data()))
   } else {
-    #print("else")
     dqv$full <- as.data.frame(table_data)
   }
 
